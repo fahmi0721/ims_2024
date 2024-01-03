@@ -1,11 +1,11 @@
 .DS_Store
-# config/koneksi.php
+config/koneksi.php
 
-# img/FileRekening/*
-# img/FotoTenagaKerja/*
-# img/FotoKtp/*
+img/FileRekening/*
+img/FotoTenagaKerja/*
+img/FotoKtp/*
 
-# File/*
+File/*
 *.tmPreferences.cache
 *.stTheme.cache
 *.sublime-workspace
