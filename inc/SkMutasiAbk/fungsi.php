@@ -19,7 +19,7 @@
             $offset=($Page - 1) * $RowPage;
             $no=$offset+1;
             $FilterSearch = Filter($Search);
-            $sql = "SELECT a.File, a.Id, a.NoKtp, a.NoDokumen, a.KodeCabang, a.KodeDivisi, a.KodeSubDivisi, a.KodeSeksi, a.TanggalSelesai, a.TanggalMulai, a.Keterangan, b.Nama FROM ims_sk_pengangkatan a INNER JOIN ims_master_tenaga_kerja b ON a.NoKtp = b.NoKtp WHERE Kategori = '1', Status = 'pkwt' $FilterSearch";
+            $sql = "SELECT a.MutasiStatus, a.File, a.Id, a.NoKtp, a.NoDokumen, a.KodeBranch, a.KodeCabang, a.KodeDivisi, a.KodeSubDivisi, a.KodeSeksi, a.TanggalSelesai, a.TanggalMulai, a.Keterangan, b.Nama FROM ims_sk_pengangkatan a INNER JOIN ims_master_tenaga_kerja b ON a.NoKtp = b.NoKtp WHERE Kategori = '1' AND a.Status = 'pkl' $FilterSearch";
             $query = $db->query($sql);
             $JumRow = $query->rowCount();
             $total_page = ceil($JumRow / $RowPage);
@@ -46,10 +46,11 @@
                     
                     $aksi .= "<a class='btn btn-xs btn-primary' data-toggle='tooltip' title='Ubah Data' onclick=\"Crud('".$res['Id']."', 'ubah')\"><i class='fa fa-edit'></i></a> <a class='btn btn-xs btn-danger' data-toggle='tooltip' title='Hapus Data' onclick=\"Crud('".$res['Id']."', 'hapus')\"><i class='fa fa-trash-o'></i></a>";
                     $row['No'] = $no;
+                    $row['MutasiStatus'] = ucfirst($res['MutasiStatus']);
                     $row['TK'] = $res['Nama']."<br><small><b>No KTP : ".$res['NoKtp']."</b></small>";
                     $row['NoDokumen'] = $res['NoDokumen'];
-                    $row['UnitKerja'] = getNameUnitKeraja($res['KodeCabang'])."<br><small><b>Divisi : ".getNameDivisi($res['KodeDivisi'])."<br>Sub Divisi : ".getNameSubDivisi($res['KodeSubDivisi'])."<br>Seksi : ".getNameSeksi($res['KodeSeksi'])."</b></small>";
-                    $row['TMT'] = "Mulai : ".$res['TanggalMulai']."<br>Selesai :".$res['TanggalSelesai'];
+                    $row['UnitKerja'] = getNameUnitKeraja($res['KodeCabang'])."<br><small><b>Branch : ".getNameBranch($res['KodeBranch'])."<br>Nama Kapal : ".getNameDivisi($res['KodeDivisi'])."<br>Jabatan : ".getNameSeksi($res['KodeSeksi'])."</b></small>";
+                    $row['TMT'] =  empty($res['TanggalSelesai']) ? $res['TanggalMulai']. " s/d Sekarang" : $res['TanggalMulai']." s/d ".$res['TanggalSelesai'];
                     $row['Keterangan'] = $res['Keterangan'];
                     $row['Aksi'] = "<div class='btn-group'>".$aksi."</div>";
                     $result['data'][] = $row;
@@ -67,7 +68,7 @@
     }
 
     function getNameBranch($Kode){
-        $sql = "SELECT Nama  FROM ims_branch WHERE Kode = '$Kode'";
+        $sql = "SELECT Nama  FROM ims_master_branch WHERE Kode = '$Kode'";
         $query = $GLOBALS['db']->query($sql);
         $r = $query->fetch(PDO::FETCH_ASSOC);
         return $r['Nama'];
@@ -245,7 +246,7 @@
                     $Validasi = ValidasiFile($data['File'],$data['Dir']);
                     if( $Validasi['msg'] == "sukses"){
                         $File = $Validasi['pesan'];
-                        $sql = "INSERT INTO ims_sk_pengangkatan SET NoKtp = :NoKtp, KodeBranch = :KodeBranch, KodeCabang = :KodeCabang, KodeDivisi = :KodeDivisi, KodeSubDivisi = :KodeSubDivisi, KodeSeksi = :KodeSeksi, TanggalMulai = :TanggalMulai, NoDokumen = :NoDokumen,`File` = :Files,  Keterangan = :Keterangan, Kategori = :Kategori,  TglCreate = :TglCreate,  UserId = :UserId";
+                        $sql = "INSERT INTO ims_sk_pengangkatan SET NoKtp = :NoKtp, KodeBranch = :KodeBranch, KodeCabang = :KodeCabang, KodeDivisi = :KodeDivisi, KodeSubDivisi = :KodeSubDivisi, KodeSeksi = :KodeSeksi, TanggalMulai = :TanggalMulai, NoDokumen = :NoDokumen,`File` = :Files,  Keterangan = :Keterangan, Kategori = :Kategori,  TglCreate = :TglCreate,  UserId = :UserId, MutasiStatus = :MutasiStatus,Status = :Status";
                         $exc = $koneksi->prepare($sql);
                         $exc->bindParam('NoKtp', $data['NoKtp'], PDO::PARAM_STR);
                         $exc->bindParam('KodeBranch', $data['KodeBranch'], PDO::PARAM_STR);
@@ -260,10 +261,14 @@
                         $exc->bindParam('Kategori', $Kategori, PDO::PARAM_STR);
                         $exc->bindParam('TglCreate', $data['TglCreate'], PDO::PARAM_STR);
                         $exc->bindParam('UserId', $data['UserId'], PDO::PARAM_STR);
+                        $exc->bindParam('MutasiStatus', $data['MutasiStatus'], PDO::PARAM_STR);
+                        $exc->bindParam('Status', $data['Status'], PDO::PARAM_STR);
                         $exc->execute();
+                        $Id = $koneksi->lastInsertId();
                         $msg['pesan'] = "Berhasil menambah data SK Mutasi";
                         $rMsg = "Berhasil menambah data SK Mutasi dengan no ktp <b>".$data['NoKtp']."</b>";
                         $msg['status'] = "sukses";
+                        UpdateTglSelesai($data['TanggalMulai'],$data['NoKtp'],$Id);
                         InsertLogs($rMsg);
                         UpdateMasterBiodata($data['NoKtp']);
                         return $msg;
@@ -271,7 +276,7 @@
                         return $Validasi;
                     }
                 }else{
-                    $sql = "INSERT INTO ims_sk_pengangkatan SET NoKtp = :NoKtp, KodeBranch = :KodeBranch, KodeCabang = :KodeCabang, KodeDivisi = :KodeDivisi, KodeSubDivisi = :KodeSubDivisi, KodeSeksi = :KodeSeksi, TanggalMulai = :TanggalMulai, NoDokumen = :NoDokumen, Keterangan = :Keterangan, Kategori = :Kategori, TglCreate = :TglCreate,  UserId = :UserId";
+                    $sql = "INSERT INTO ims_sk_pengangkatan SET NoKtp = :NoKtp, KodeBranch = :KodeBranch, KodeCabang = :KodeCabang, KodeDivisi = :KodeDivisi, KodeSubDivisi = :KodeSubDivisi, KodeSeksi = :KodeSeksi, TanggalMulai = :TanggalMulai, NoDokumen = :NoDokumen, Keterangan = :Keterangan, Kategori = :Kategori, TglCreate = :TglCreate,  UserId = :UserId, MutasiStatus = :MutasiStatus, Status = :Status";
                     $exc = $koneksi->prepare($sql);
                     $exc->bindParam('NoKtp', $data['NoKtp'], PDO::PARAM_STR);
                     $exc->bindParam('KodeBranch', $data['KodeBranch'], PDO::PARAM_STR);
@@ -285,10 +290,14 @@
                     $exc->bindParam('Kategori', $Kategori, PDO::PARAM_STR);
                     $exc->bindParam('TglCreate', $data['TglCreate'], PDO::PARAM_STR);
                     $exc->bindParam('UserId', $data['UserId'], PDO::PARAM_STR);
+                    $exc->bindParam('MutasiStatus', $data['UserId'], PDO::PARAM_STR);
+                    $exc->bindParam('Status', $data['Status'], PDO::PARAM_STR);
                     $exc->execute();
+                    $Id = $koneksi->lastInsertId();
                     $msg['pesan'] = "Berhasil menambah data SK Mutasi";
                     $rMsg = "Berhasil menambah data SK Mutasi dengan no ktp <b>".$data['NoKtp']."</b>";
                     $msg['status'] = "sukses";
+                    UpdateTglSelesai($data['TanggalMulai'],$data['NoKtp'],$Id);
                     InsertLogs($rMsg);
                     UpdateMasterBiodata($data['NoKtp']);
                     return $msg;
@@ -331,7 +340,7 @@
                     if( $Validasi['msg'] == "sukses"){
                         $Files = $Validasi['pesan'];
                         HapusFile($File['File'],$data['Dir']);
-                        $sql = "UPDATE ims_sk_pengangkatan SET NoKtp = :NoKtp, KodeBranch = :KodeBranch, KodeCabang = :KodeCabang, KodeDivisi = :KodeDivisi, KodeSubDivisi = :KodeSubDivisi, KodeSeksi = :KodeSeksi, TanggalMulai = :TanggalMulai, TanggalSelesai = :TanggalSelesai, NoDokumen = :NoDokumen,`File` = :Files,  Keterangan = :Keterangan,  TglUpdate = :TglUpdate WHERE  Id = :Id";
+                        $sql = "UPDATE ims_sk_pengangkatan SET NoKtp = :NoKtp, KodeBranch = :KodeBranch, KodeCabang = :KodeCabang, KodeDivisi = :KodeDivisi, KodeSubDivisi = :KodeSubDivisi, KodeSeksi = :KodeSeksi, TanggalMulai = :TanggalMulai, TanggalSelesai = :TanggalSelesai, NoDokumen = :NoDokumen,`File` = :Files,  Keterangan = :Keterangan,  TglUpdate = :TglUpdate,MutasiStatus = :MutasiStatus WHERE  Id = :Id";
                         $exc = $koneksi->prepare($sql);
                         $exc->bindParam('NoKtp', $data['NoKtp'], PDO::PARAM_STR);
                         $exc->bindParam('KodeBranch', $data['KodeBranch'], PDO::PARAM_STR);
@@ -345,6 +354,7 @@
                         $exc->bindParam('Files', $Files, PDO::PARAM_STR);
                         $exc->bindParam('Keterangan', $data['Keterangan'], PDO::PARAM_STR);
                         $exc->bindParam('TglUpdate', $data['TglUpdate'], PDO::PARAM_STR);
+                        $exc->bindParam('MutasiStatus', $data['MutasiStatus'], PDO::PARAM_STR);
                         $exc->bindParam('Id', $data['Id'], PDO::PARAM_STR);
                         $exc->execute();
                         $msg['pesan'] = "Berhasil menambah data SK Mutasi";
@@ -359,7 +369,7 @@
                 }else{
                     
                     $data['TanggalSelesai'] = empty($data['TanggalSelesai']) ? null : $data['TanggalSelesai'];
-                    $sql = "UPDATE ims_sk_pengangkatan SET NoKtp = :NoKtp, KodeBranch = :KodeBranch, KodeCabang = :KodeCabang, KodeDivisi = :KodeDivisi, KodeSubDivisi = :KodeSubDivisi, KodeSeksi = :KodeSeksi, TanggalMulai = :TanggalMulai, TanggalSelesai = :TanggalSelesai, NoDokumen = :NoDokumen, Keterangan = :Keterangan,  TglUpdate = :TglUpdate WHERE  Id = :Id";
+                    $sql = "UPDATE ims_sk_pengangkatan SET NoKtp = :NoKtp, KodeBranch = :KodeBranch, KodeCabang = :KodeCabang, KodeDivisi = :KodeDivisi, KodeSubDivisi = :KodeSubDivisi, KodeSeksi = :KodeSeksi, TanggalMulai = :TanggalMulai, TanggalSelesai = :TanggalSelesai, NoDokumen = :NoDokumen, Keterangan = :Keterangan,  TglUpdate = :TglUpdate, MutasiStatus = :MutasiStatus WHERE  Id = :Id";
                     $exc = $koneksi->prepare($sql);
                     $exc->bindParam('NoKtp', $data['NoKtp'], PDO::PARAM_STR);
                     $exc->bindParam('KodeBranch', $data['KodeBranch'], PDO::PARAM_STR);
@@ -372,6 +382,7 @@
                     $exc->bindParam('NoDokumen', $data['NoDokumen'], PDO::PARAM_STR);
                     $exc->bindParam('Keterangan', $data['Keterangan'], PDO::PARAM_STR);
                     $exc->bindParam('TglUpdate', $data['TglUpdate'], PDO::PARAM_STR);
+                    $exc->bindParam('MutasiStatus', $data['MutasiStatus'], PDO::PARAM_STR);
                     $exc->bindParam('Id', $data['Id'], PDO::PARAM_STR);
                     $exc->execute();
                     $msg['pesan'] = "Berhasil mengubah data SK Mutasi";
@@ -393,6 +404,19 @@
             $msg['status'] = "gagal";
             InsertLogs($msg['pesan']);
             return $msg;
+        }
+    }
+
+    function UpdateTglSelesai($TanggalMulai,$NoKtp,$Id=null){
+        $koneksi = $GLOBALS['db'];
+        if(is_null($Id)){
+            $TanggalSelesai = date("Y-m-d", strtotime('-1 days', strtotime($TanggalMulai)));
+            $sql = "UPDATE ims_sk_pengangkatan SET TanggalSelesai = '".$TanggalSelesai."' WHERE NoKtp = '".$NoKtp."'";
+            $query = $koneksi->query($sql);
+        }else{
+            $TanggalSelesai = date("Y-m-d", strtotime('-1 days', strtotime($TanggalMulai)));
+            $sql = "UPDATE ims_sk_pengangkatan SET TanggalSelesai = '".$TanggalSelesai."' WHERE NoKtp = '".$NoKtp."' AND Id != '".$Id."'";
+            $query = $koneksi->query($sql);
         }
     }
 

@@ -16,7 +16,7 @@
         $row = array(); 
         if(is_array($data)){
             $FilterSearch = Filter($data);
-            $sql = "SELECT a.File, a.Id, a.NoKtp, a.NoDokumen, a.KodeCabang, a.KodeDivisi, a.KodeSubDivisi, a.KodeSeksi, a.TanggalSelesai, a.TanggalMulai, a.Keterangan, b.Nama FROM ims_sk_pengangkatan a INNER JOIN ims_master_tenaga_kerja b ON a.NoKtp = b.NoKtp WHERE Kategori = '0' AND Status = 'pkl' $FilterSearch";
+            $sql = "SELECT a.KodeBranch, a.File, a.Id, a.NoKtp, a.NoDokumen, a.KodeCabang, a.KodeDivisi, a.KodeSubDivisi, a.KodeSeksi, a.TanggalSelesai, a.TanggalMulai, a.Keterangan, b.Nama FROM ims_sk_pengangkatan a INNER JOIN ims_master_tenaga_kerja b ON a.NoKtp = b.NoKtp WHERE Kategori = '0' AND Status = 'pkl' $FilterSearch";
             $query = $db->query($sql);
             $JumRow = $query->rowCount();
             // $total_page = ceil($JumRow / $RowPage);
@@ -46,7 +46,7 @@
                     $row['No'] = $no;
                     $row['TK'] = $res['Nama']."<br><small><b>No KTP : ".$res['NoKtp']."</b></small>";
                     $row['NoDokumen'] = $res['NoDokumen'];
-                    $row['UnitKerja'] = getNameUnitKeraja($res['KodeCabang'])."<br><small><b>Nama Kapal : ".getNameDivisi($res['KodeDivisi'])."<br>Sub Divisi : ".getNameSubDivisi($res['KodeSubDivisi'])."<br>Jabatan : ".getNameSeksi($res['KodeSeksi'])."</b></small>";
+                    $row['UnitKerja'] = getNameUnitKeraja($res['KodeCabang'])."<br><small><b>Branch : ".getNameBranch($res['KodeBranch'])."<br>Nama Kapal : ".getNameDivisi($res['KodeDivisi'])."<br>Jabatan : ".getNameSeksi($res['KodeSeksi'])."</b></small>";
                     $row['TMT'] = is_null($res['TanggalSelesai']) ? $res['TanggalMulai'] ." s/d Sekarang" : $res['TanggalMulai']." s/d ".$res['TanggalSelesai'];
                     $row['Keterangan'] = $res['Keterangan'];
                     $row['Aksi'] = "<div class='btn-group'>".$aksi."</div>";

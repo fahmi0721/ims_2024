@@ -261,8 +261,9 @@
                         <thead>
                             <tr>
                                 <th class='text-center'>No</th>
+                                <th>Branch</th>
                                 <th>Unit Kerja</th>
-                                <th>Divisi</th>
+                                <th>Divisi / Nama Kapal</th>
                                 <th>Sub Divisi</th>
                                 <th>Seksi / Jabatan</th>
                                 <th>Periode</th>

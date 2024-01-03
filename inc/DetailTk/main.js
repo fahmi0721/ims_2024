@@ -80,6 +80,7 @@ function RiwayatKerja(NoKtp) {
 					var iData = res[i];
 					html += "<tr>";
 					html += "<td>" + No + "</td>";
+					html += "<td>" + iData['NamaBranch'] + "</td>";
 					html += "<td>" + iData['NamaCabang'] + "</td>";
 					html += "<td>" + iData['NamaDivisi'] + "</td>";
 					html += "<td>" + iData['NamaSubDivisi'] + "</td>";

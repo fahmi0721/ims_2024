@@ -104,7 +104,7 @@
 
     function RiwayatKerja($NoKtp){
         $NoKtp = base64_decode($NoKtp);
-        $sql = "SELECT a.*, b.NamaCabang, c.NamaDivisi, d.NamaSubDivisi, e.NamaSeksi  FROM ims_sk_pengangkatan a LEFT JOIN ims_master_cabang b ON a.KodeCabang = b.Kode LEFT JOIN ims_master_divisi c ON a.KodeDivisi = c.Kode LEFT JOIN ims_master_subdivisi d ON a.KodeSubDivisi = d.Kode LEFT JOIN ims_master_seksi e ON a.KodeSeksi = e.Kode WHERE a.NoKtp = '$NoKtp'";
+        $sql = "SELECT a.*, b.NamaCabang, c.NamaDivisi, d.NamaSubDivisi, e.NamaSeksi, f.Nama as NamaBranch  FROM ims_sk_pengangkatan a LEFT JOIN ims_master_cabang b ON a.KodeCabang = b.Kode LEFT JOIN ims_master_divisi c ON a.KodeDivisi = c.Kode LEFT JOIN ims_master_subdivisi d ON a.KodeSubDivisi = d.Kode LEFT JOIN ims_master_seksi e ON a.KodeSeksi = e.Kode LEFT JOIN ims_master_branch f ON a.KodeBranch = f.Kode WHERE a.NoKtp = '$NoKtp' ORDER BY a.Id ASC";
         $query = $GLOBALS['db']->query($sql);
         $res = array();
         while($r = $query->fetch(PDO::FETCH_ASSOC)){
