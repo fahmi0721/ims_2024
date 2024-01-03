@@ -1,0 +1,14 @@
+.DS_Store
+# config/koneksi.php
+
+# img/FileRekening/*
+# img/FotoTenagaKerja/*
+# img/FotoKtp/*
+
+# File/*
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+/tests/tests/
+/tests/results/
