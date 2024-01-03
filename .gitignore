@@ -1,5 +1,5 @@
 .DS_Store
-config/koneksi.php
+# config/koneksi.php
 
 img/FileRekening/*
 img/FotoTenagaKerja/*
