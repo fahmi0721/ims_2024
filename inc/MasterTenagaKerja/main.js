@@ -2,6 +2,7 @@ $(document).ready(function(){
     Clear();
 	LoadData(1);
 	SearchStatus();
+	SearchStatusTk();
 	SearchAgama();
 	GetAgama();
 	TglPicker();
@@ -18,6 +19,14 @@ function SearchStatus() {
 		ballowClear: true,
 		theme: "bootstrap",
 		placeholder: 'Status Kawin',
+	});
+}
+
+function SearchStatusTk() {
+	$('.select-status-tk').select2({
+		ballowClear: true,
+		theme: "bootstrap",
+		placeholder: 'Status Tenaga Kerja',
 	});
 }
 
@@ -119,17 +128,19 @@ function LoadData(page) {
 					html += "<td>" + r['Ttl'];
 					html += "<td>" + r['Pendidikan'] + "</td>";
 					html += "<td>" + r['Agama'] + "</td>";
+					html += "<td>" + r['StatusTk'] + "</td>";
 					html += "<td>" + r['Tmt'] + "</td>";
 					html += "<td>" + r['Rekening'] + "</td>";
 					html += "<td>" + r['NoHp'] + "</td>";
 					html += "<td>" + r['Jabatan'] + "</td>";
 					html += "<td>" + r['Alamat'] + "</td>";
+					html += "<td>" + r['AlamatDomisili'] + "</td>";
 					html += "<td>" + r['Flag'] + "</td>";
 					html += "<td class='text-center'>" + r['Aksi'] + "</td>";
 					html += "</tr>";
 				}
 			} else {
-				html = "<tr><td class='text-center' colspan='12'>No data availible in table.</td></tr>";
+				html = "<tr><td class='text-center' colspan='14'>No data availible in table.</td></tr>";
 			}
 			$("#ShowData").html(html);
 			var PagingInfo = "Menampilkan " + result['data_new'] + " Ke " + result['data_last'] + " dari " + result['total_data'];
@@ -186,7 +197,7 @@ function Crud(Id,Status){
 					$(".box-tools").hide();
 					$("#DetailData").hide();
 					$("#aksi").val("update");
-					var iForm = ['Id', 'NoKtp', 'Nama', 'TptLahir', 'TglLahir', 'StatusKawin', 'JenisKelamin', 'Agama', 'Npwp', 'NoHp', 'GolDarah', 'Flag','Alamat','Tmt'];
+					var iForm = ['Id', 'NoKtp', 'Nama', 'TptLahir', 'TglLahir', 'StatusKawin', 'JenisKelamin', 'Agama', 'Npwp', 'NoHp', 'GolDarah', 'Flag','Alamat','Tmt',"StatusTk","AlamatDomisili"];
 					for(var i=0; i < iForm.length; i++){
 						if(iForm[i] == "Flag"){
 							$("#Flag" + data[iForm[i]]).prop("checked", true);
@@ -196,6 +207,7 @@ function Crud(Id,Status){
 							$("#" + iForm[i]).val(data[iForm[i]]);
 						}
 					}
+					$(".select-status-tk").trigger('change');
 					$(".select-status").trigger('change');
 					$(".select-agama").trigger('change');
 					
@@ -236,8 +248,8 @@ function Crud(Id,Status){
 
 function Validasi(){
 	var aksi = $("#aksi").val();
-	var iForm = ['NoKtp', 'Nama', 'TptLahir', 'TglLahir', 'StatusKawin', 'Agama', "NoHp", "Tmt"];
-	var KetiForm = ["No KTP belum lengkap", "Nama belum lengkap", "Tempat Lahir belum lengkap", "Tanggal Lahir belum lengkap", "Status Kawin belum lengkap", "Agama belum lengkap", "NoHp belum lengkap", "No HP belum lengkap"];
+	var iForm = ['NoKtp', 'Nama', 'TptLahir', 'TglLahir', 'StatusKawin', 'Agama', "NoHp", "Tmt","StatusTk","Alamat","AlamatDomisli"];
+	var KetiForm = ["No KTP belum lengkap", "Nama belum lengkap", "Tempat Lahir belum lengkap", "Tanggal Lahir belum lengkap", "Status Kawin belum lengkap", "Agama belum lengkap", "NoHp belum lengkap", "TMT belum lengkap","Status Tenaga Kerja belum lengkap","Alamat KTP belum lengkap","Alamat Domisili belum lengkap"];
 	for (var i = 0; i < iForm.length; i++) {
 		if (aksi != "delete") {
 			if(iForm[i] == 'NoKtp'){

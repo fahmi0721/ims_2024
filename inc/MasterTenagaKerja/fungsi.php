@@ -82,7 +82,7 @@
             $offset=($Page - 1) * $RowPage;
             $no=$offset+1;
             $FilterSearch = Filter($Search);
-            $sql = "SELECT Nama, Id,Nik,NoKtp, TptLahir, FotoKtp, TglLahir, StatusKawin, JenisKelamin, Agama, Tmt, GolDarah,NoHp, Tmt, Alamat, Foto,Flag FROM ims_master_tenaga_kerja $FilterSearch";
+            $sql = "SELECT Nama, Id,Nik,NoKtp, TptLahir, FotoKtp, TglLahir, StatusKawin, JenisKelamin, Agama, Tmt, GolDarah,NoHp, Tmt, Alamat, Foto,Flag, AlamatDomisili,StatusTk FROM ims_master_tenaga_kerja $FilterSearch";
             $query = $db->query($sql);
             $JumRow = $query->rowCount();
             $total_page = ceil($JumRow / $RowPage);
@@ -93,6 +93,7 @@
             $query = $db->query($sql);
             $Flag = array("0"=>"<center><label class='label label-danger'>Tidak Aktif<label></center>","1"=>"<center><label class='label label-success'>Aktif<label></center>");
             $StatusKawin = array(1 => "Belum Menikah", 2 => "Sudah Menikah", 3 => "Janda / Duda");
+            $StatusTk = array('TK0' => "TK/0", "TK1" => "TK/1", 'TK2' => "TK/2", "TK3" => "TK/3", "K0" => "K/0", "K1" => "K/1", "K2" => "K/2", "K3" => "K/3");
             if($JumRow > 0){
                 while ($res = $query->fetch(PDO::FETCH_ASSOC)) { 
                     $aksi = !empty($res['Foto']) ? "<a class='btn btn-xs btn-success' data-toggle='tooltip' title='Lihat Foto' onclick=\"Crud('".$res['Foto']."', 'foto')\"><i class='fa fa-image'></i></a>" : "";
@@ -113,6 +114,8 @@
                     $row['Tmt'] = tgl_indo($res['Tmt']);
                     $row['Pendidikan'] = $Mp;
                     $row['Alamat'] = $res['Alamat'];
+                    $row['AlamatDomisili'] = $res['AlamatDomisili'];
+                    $row['StatusTk'] = $StatusTk[$res['StatusTk']];
                     $row['Nama'] = $res['Nama'];
                     $row['Agama'] = getAgama($res['Agama']);
                     $row['Ttl'] = "<b>".$res['TptLahir']."</b> <br><small>".tgl_indo($res['TglLahir'])."</small>";
@@ -255,7 +258,7 @@
                             return $msg;
                         } 
                         if($Img['status'] == "sukses"){
-                            $sql = "INSERT INTO ims_master_tenaga_kerja SET Nama = :Nama, NoKtp = :NoKtp, TptLahir = :TptLahir, TglLahir = :TglLahir, StatusKawin = :StatusKawin, JenisKelamin = :JenisKelamin, Agama = :Agama, Npwp = :Npwp, GolDarah = :GolDarah, NoHp = :NoHp, Alamat = :Alamat, Tmt = :Tmt, Foto = :Foto, FotoKtp = :FotoKtp,  Flag = :Flag,  TglCreate = :TglCreate,  UserId = :UserId"; 
+                            $sql = "INSERT INTO ims_master_tenaga_kerja SET Nama = :Nama, NoKtp = :NoKtp, TptLahir = :TptLahir, TglLahir = :TglLahir, StatusKawin = :StatusKawin, JenisKelamin = :JenisKelamin, Agama = :Agama, Npwp = :Npwp, GolDarah = :GolDarah, NoHp = :NoHp, Alamat = :Alamat, Tmt = :Tmt, Foto = :Foto, FotoKtp = :FotoKtp,  Flag = :Flag,  TglCreate = :TglCreate,  UserId = :UserId,StatusTk = :StatusTk,AlamatDomisili = :AlamatDomisili"; 
                             $exc = $koneksi->prepare($sql);
                             $exc->bindParam('Nama', $data['Nama'], PDO::PARAM_STR);
                             $exc->bindParam('NoKtp', $data['NoKtp'], PDO::PARAM_STR);
@@ -274,6 +277,8 @@
                             $exc->bindParam('Flag', $data['Flag'], PDO::PARAM_STR);
                             $exc->bindParam('TglCreate', $data['TglCreate'], PDO::PARAM_STR);
                             $exc->bindParam('UserId', $data['UserId'], PDO::PARAM_STR);
+                            $exc->bindParam('StatusTk', $data['StatusTk'], PDO::PARAM_STR);
+                            $exc->bindParam('AlamatDomisili', $data['AlamatDomisili'], PDO::PARAM_STR);
                             $exc->execute();
                             $msg['pesan'] = "Berhasil menambah data master Tenaga Kerja";
                             $rMsg = "Berhasil menambah data master paket dengan nama tenaga kerja <b>".$data['Nama']."</b>";
@@ -304,7 +309,7 @@
                             $msg['status'] = "gagal";
                             return $msg;
                         }
-                        $sql = "INSERT INTO ims_master_tenaga_kerja SET Nama = :Nama, NoKtp = :NoKtp, TptLahir = :TptLahir, TglLahir = :TglLahir, StatusKawin = :StatusKawin, JenisKelamin = :JenisKelamin, Agama = :Agama, Npwp = :Npwp, GolDarah = :GolDarah, NoHp = :NoHp, Alamat = :Alamat, Tmt = :Tmt, Flag = :Flag, FotoKtp = :FotoKtp,  TglCreate = :TglCreate,  UserId = :UserId"; 
+                        $sql = "INSERT INTO ims_master_tenaga_kerja SET Nama = :Nama, NoKtp = :NoKtp, TptLahir = :TptLahir, TglLahir = :TglLahir, StatusKawin = :StatusKawin, JenisKelamin = :JenisKelamin, Agama = :Agama, Npwp = :Npwp, GolDarah = :GolDarah, NoHp = :NoHp, Alamat = :Alamat, Tmt = :Tmt, Flag = :Flag, FotoKtp = :FotoKtp,  TglCreate = :TglCreate,  UserId = :UserId, StatusTk = :StatusTk,AlamatDomisili = :AlamatDomisili"; 
                         $exc = $koneksi->prepare($sql);
                         $exc->bindParam('Nama', $data['Nama'], PDO::PARAM_STR);
                         $exc->bindParam('NoKtp', $data['NoKtp'], PDO::PARAM_STR);
@@ -322,6 +327,8 @@
                         $exc->bindParam('FotoKtp', $FotoKtp, PDO::PARAM_STR);
                         $exc->bindParam('TglCreate', $data['TglCreate'], PDO::PARAM_STR);
                         $exc->bindParam('UserId', $data['UserId'], PDO::PARAM_STR);
+                        $exc->bindParam('StatusTk', $data['StatusTk'], PDO::PARAM_STR);
+                        $exc->bindParam('AlamatDomisili', $data['AlamatDomisili'], PDO::PARAM_STR);
                         $exc->execute();
                         $msg['pesan'] = "Berhasil menambah data master Tenaga Kerja";
                         $rMsg = "Berhasil menambah data master paket dengan nama tenaga kerja <b>".$data['Nama']."</b>";
@@ -397,7 +404,7 @@
                         }
                         if($Img['status'] == "sukses"){
                             HapusFile($dtLama['Foto'],$data['Dir']);
-                            $sql = "UPDATE ims_master_tenaga_kerja SET Nama = :Nama, NoKtp = :NoKtp, TptLahir = :TptLahir, TglLahir = :TglLahir, StatusKawin = :StatusKawin, JenisKelamin = :JenisKelamin, Agama = :Agama, Npwp = :Npwp, GolDarah = :GolDarah, NoHp = :NoHp, Alamat = :Alamat, Tmt = :Tmt, Foto = :Foto, FotoKtp = :FotoKtp, Flag = :Flag,  TglUpdate = :TglUpdate WHERE Id = :Id"; 
+                            $sql = "UPDATE ims_master_tenaga_kerja SET Nama = :Nama, NoKtp = :NoKtp, TptLahir = :TptLahir, TglLahir = :TglLahir, StatusKawin = :StatusKawin, JenisKelamin = :JenisKelamin, Agama = :Agama, Npwp = :Npwp, GolDarah = :GolDarah, NoHp = :NoHp, Alamat = :Alamat, Tmt = :Tmt, Foto = :Foto, FotoKtp = :FotoKtp, Flag = :Flag,  TglUpdate = :TglUpdate, StatusTk = :StatusTk,AlamatDomisili = :AlamatDomisili WHERE Id = :Id"; 
                             $exc = $koneksi->prepare($sql);
                             $exc->bindParam('Nama', $data['Nama'], PDO::PARAM_STR);
                             $exc->bindParam('NoKtp', $data['NoKtp'], PDO::PARAM_STR);
@@ -415,6 +422,8 @@
                             $exc->bindParam('FotoKtp', $FotoKtp, PDO::PARAM_STR);
                             $exc->bindParam('Flag', $data['Flag'], PDO::PARAM_STR);
                             $exc->bindParam('TglUpdate', $data['TglUpdate'], PDO::PARAM_STR);
+                            $exc->bindParam('StatusTk', $data['StatusTk'], PDO::PARAM_STR);
+                            $exc->bindParam('AlamatDomisili', $data['AlamatDomisili'], PDO::PARAM_STR);
                             $exc->bindParam('Id', $data['Id'], PDO::PARAM_STR);
                             $exc->execute();
                             $msg['pesan'] = "Berhasil mengubah data master Tenaga Kerja";
@@ -445,7 +454,7 @@
                         }else{
                             $FotoKtp = $dtLama['FotoKtp'];
                         }
-                        $sql = "UPDATE ims_master_tenaga_kerja SET Nama = :Nama, NoKtp = :NoKtp, TptLahir = :TptLahir, TglLahir = :TglLahir, StatusKawin = :StatusKawin, JenisKelamin = :JenisKelamin, Agama = :Agama, Npwp = :Npwp, GolDarah = :GolDarah, NoHp = :NoHp, Alamat = :Alamat, Tmt = :Tmt, Flag = :Flag, FotoKtp = :FotoKtp,  TglUpdate = :TglUpdate WHERE Id = :Id"; 
+                        $sql = "UPDATE ims_master_tenaga_kerja SET Nama = :Nama, NoKtp = :NoKtp, TptLahir = :TptLahir, TglLahir = :TglLahir, StatusKawin = :StatusKawin, JenisKelamin = :JenisKelamin, Agama = :Agama, Npwp = :Npwp, GolDarah = :GolDarah, NoHp = :NoHp, Alamat = :Alamat, Tmt = :Tmt, Flag = :Flag, FotoKtp = :FotoKtp,  TglUpdate = :TglUpdate, StatusTk = :StatusTk,AlamatDomisili = :AlamatDomisili WHERE Id = :Id"; 
                         $exc = $koneksi->prepare($sql);
                         $exc->bindParam('Nama', $data['Nama'], PDO::PARAM_STR);
                         $exc->bindParam('NoKtp', $data['NoKtp'], PDO::PARAM_STR);
@@ -462,6 +471,8 @@
                         $exc->bindParam('Flag', $data['Flag'], PDO::PARAM_STR);
                         $exc->bindParam('FotoKtp', $FotoKtp, PDO::PARAM_STR);
                         $exc->bindParam('TglUpdate', $data['TglUpdate'], PDO::PARAM_STR);
+                        $exc->bindParam('StatusTk', $data['StatusTk'], PDO::PARAM_STR);
+                        $exc->bindParam('AlamatDomisili', $data['AlamatDomisili'], PDO::PARAM_STR);
                         $exc->bindParam('Id', $data['Id'], PDO::PARAM_STR);
                         $exc->execute();
                         $msg['pesan'] = "Berhasil mengubah data master Tenaga Kerja";

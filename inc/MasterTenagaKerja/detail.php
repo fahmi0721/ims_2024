@@ -113,7 +113,6 @@
                                 <span class='input-group-addon'><i class='fa fa-calendar'></i></span>
                             </div>
                         </div>
-                        
                     </div>
                     <div class="form-group">
                         <div class='col-sm-6'>
@@ -126,9 +125,32 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <div class='col-sm-6'>
+                            <label class="control-label">Status Tenaga Kerja <span class='text-danger'>*</span></label>
+                            <select class='form-control select-status-tk FormInput' name='StatusTk' id='StatusTk'>
+                                <option value=''>Pilih Status Tenaga Kerja</option>
+                                <option value='TK0'>TK/0</option>
+                                <option value='TK1'>TK/1</option>
+                                <option value='TK2'>TK/2</option>
+                                <option value='TK3'>TK/3</option>
+                                <option value='K0'>K/0</option>
+                                <option value='K1'>K/1</option>
+                                <option value='K2'>K/2</option>
+                                <option value='K3'>K/3</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+                    <div class="form-group">
                         <div class='col-sm-12'>
-                            <label class="control-label">Alamat</label>
+                            <label class="control-label">Alamat KTP <span class='text-danger'>*</span></label>
                             <textarea type='text' name='Alamat' id='Alamat' rows='5' class='form-control FormInput' placeholder='Alamat'></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class='col-sm-12'>
+                            <label class="control-label">Alamat Domisli <span class='text-danger'>*</span></label>
+                            <textarea type='text' name='AlamatDomisili' id='AlamatDomisili' rows='5' class='form-control FormInput' placeholder='Alamat Domisili'></textarea>
                         </div>
                     </div>
                     <div class="form-group">
@@ -172,11 +194,13 @@
                             <th>TTL</th>
                             <th>Pendidikan</th>
                             <th>Agama</th>
+                            <th>Status TK</th>
                             <th>TMT</th>
                             <th>Rekening</th>
                             <th>No Hp</th>
                             <th>Jabatan</th>
                             <th>Alamat</th>
+                            <th>Alamat Domisili</th>
                             <th width='10%'>Flag</th>
                             <th width="8%"><center>Aksi</center></th>
                         </tr>
