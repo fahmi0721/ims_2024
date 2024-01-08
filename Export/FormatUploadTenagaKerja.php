@@ -42,7 +42,11 @@ require_once dirname(__FILE__) . '/fungsi.php';
 
 // Create new PHPExcel object
 $objPHPExcel = new PHPExcel();
-
+$objPHPExcel->getDefaultStyle()
+    ->getNumberFormat()
+    ->setFormatCode(
+        PHPExcel_Style_NumberFormat::FORMAT_TEXT
+    );
 // Set document properties
 $objPHPExcel->getProperties()->setCreator("PT ISMA")
 							 ->setLastModifiedBy("PT ISMA")
@@ -71,7 +75,11 @@ $Hijau = array('fill' => array('type' => PHPExcel_Style_Fill::FILL_SOLID,'color'
 /** TEXT COLOR */
 $TextTitle = array('font'  => array('bold'  => true,'color' => array('rgb' => 'FFFFFF'),'size'  => 11,'name'  => 'Arial'));  
 $TextNormal = array('font'  => array('bold'  => false,'color' => array('rgb' => '000000'),'size'  => 11,'name'  => 'Arial'));  
-
+$HorizontalCenter = array(
+    'alignment' => array(
+        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+    )
+);
 
 
 /** SET TEXT-COLOR B1 - C7 */
@@ -90,7 +98,8 @@ $objPHPExcel->setActiveSheetIndex(0)->mergeCells('E2:H2');
 $objPHPExcel->setActiveSheetIndex(0)->mergeCells('J2:M2');
 $objPHPExcel->setActiveSheetIndex(0)->mergeCells('O2:Q2');
 $objPHPExcel->setActiveSheetIndex(0)->mergeCells('O8:Q8');
-$objPHPExcel->setActiveSheetIndex(0)->mergeCells('O13:R13');
+$objPHPExcel->setActiveSheetIndex(0)->mergeCells('O13:Q13');
+$objPHPExcel->setActiveSheetIndex(0)->mergeCells('O24:R24');
 
 // Add some data
 $objPHPExcel->setActiveSheetIndex(0)
@@ -158,15 +167,15 @@ $BatasRowBranch = $RowBranch -1;
 /** SET BORDER MASTER BRANCH */
 $objPHPExcel->setActiveSheetIndex(0)->getStyle("E".$RowBranchTitleTable.":H".$BatasRowBranch)->applyFromArray($border_style);
 $objPHPExcel->setActiveSheetIndex(0)->mergeCells('E'.$RowBranchTitle.':H'.$RowBranchTitle);
-$objPHPExcel->setActiveSheetIndex(0)->getStyle("E".$RowBranchTitle.":H".$RowBranchTitle)->applyFromArray($Orange);
+// $objPHPExcel->setActiveSheetIndex(0)->getStyle("E".$RowBranchTitle.":H".$RowBranchTitle)->applyFromArray($Orange);
 
 
 /** SET DATA DIVISI */
 $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('J2', 'MASTER DIVISI')
+            ->setCellValue('J2', 'MASTER DIVISI / NAMA KAPAL')
             ->setCellValue('J3', 'NO')
             ->setCellValue('K3', 'KODE')
-            ->setCellValue('L3', 'NAMA DIVISI')
+            ->setCellValue('L3', 'NAMA DIVISI / KAPAL')
             ->setCellValue('M3', 'STATUS');
 $objPHPExcel->setActiveSheetIndex(0)->getStyle("J3:M3")->applyFromArray($Orange);
 $RowDivisi = 4;
@@ -266,7 +275,7 @@ $objPHPExcel->setActiveSheetIndex(0)->getStyle("O3:Q6")->applyFromArray($border_
 /** JENIS KELAMIN */
 $objPHPExcel->setActiveSheetIndex(0)
             ->setCellValue('O8', 'JENIS KELAMIN')
-            ->setCellValue('O9', 'KODE')
+            ->setCellValue('O9', 'NO')
             ->setCellValue('O10', '1')
             ->setCellValue('O11', '2')
             ->setCellValue('P9', 'KODE')
@@ -278,16 +287,49 @@ $objPHPExcel->setActiveSheetIndex(0)
 $objPHPExcel->setActiveSheetIndex(0)->getStyle("O9:Q9")->applyFromArray($Orange);
 $objPHPExcel->setActiveSheetIndex(0)->getStyle("O9:Q11")->applyFromArray($border_style);
 
+/** STATUS KAWIN */
+$objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('O13', 'STATUS KAWIN')
+            ->setCellValue('O14', 'NO')
+            ->setCellValue('O15', '1')
+            ->setCellValue('O16', '2')
+            ->setCellValue('O17', '3')
+            ->setCellValue('O18', '4')
+            ->setCellValue('O19', '5')
+            ->setCellValue('O20', '6')
+            ->setCellValue('O21', '7')
+            ->setCellValue('O22', '8')
+            ->setCellValue('P14', 'KODE')
+            ->setCellValue('P15', 'TK0')
+            ->setCellValue('P16', 'TK1')
+            ->setCellValue('P17', 'TK2')
+            ->setCellValue('P18', 'TK3')
+            ->setCellValue('P19', 'K0')
+            ->setCellValue('P20', 'K1')
+            ->setCellValue('P21', 'K2')
+            ->setCellValue('P22', 'K3')
+            ->setCellValue('Q14', 'KETERANGAN')
+            ->setCellValue('Q15', 'TK/0')
+            ->setCellValue('Q16', 'TK/1')
+            ->setCellValue('Q17', 'TK/2')
+            ->setCellValue('Q18', 'TK/3')
+            ->setCellValue('Q19', 'K/0')
+            ->setCellValue('Q20', 'TK/1')
+            ->setCellValue('Q21', 'K/2')
+            ->setCellValue('Q22', 'K/3');
+$objPHPExcel->setActiveSheetIndex(0)->getStyle("O14:Q14")->applyFromArray($Orange);
+$objPHPExcel->setActiveSheetIndex(0)->getStyle("O14:Q22")->applyFromArray($border_style);
+
 
 /** MASTER AGAMA */
 $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('O13', 'MASTER AGAMA')
-            ->setCellValue('O14', 'NO')
-            ->setCellValue('P14', 'KODE')
-            ->setCellValue('Q14', 'NAMA')
-            ->setCellValue('R14', 'STATUS');
-$objPHPExcel->setActiveSheetIndex(0)->getStyle("O14:R14")->applyFromArray($Orange);
-$RowAgama = 15;
+            ->setCellValue('O24', 'MASTER AGAMA')
+            ->setCellValue('O25', 'NO')
+            ->setCellValue('P25', 'KODE')
+            ->setCellValue('Q25', 'NAMA')
+            ->setCellValue('R25', 'STATUS');
+$objPHPExcel->setActiveSheetIndex(0)->getStyle("O25:R25")->applyFromArray($Orange);
+$RowAgama = 26;
 $DataAgama = LoadDataAgama();
 if($DataAgama['Row'] > 0){
     $No=1;
@@ -303,7 +345,7 @@ if($DataAgama['Row'] > 0){
 }
 $BatasRowAgama = $RowAgama -1;
 /** SET BORDER MASTER AGAMA */
-$objPHPExcel->setActiveSheetIndex(0)->getStyle("O14:R".$BatasRowAgama)->applyFromArray($border_style);
+$objPHPExcel->setActiveSheetIndex(0)->getStyle("O25:R".$BatasRowAgama)->applyFromArray($border_style);
 // Rename worksheet
 $objPHPExcel->getActiveSheet(0)->setTitle('PETUNJUK PENGISIAN');
 
@@ -337,6 +379,8 @@ $objPHPExcel->setActiveSheetIndex(1)->mergeCells('T1:T2');
 $objPHPExcel->setActiveSheetIndex(1)->mergeCells('U1:U2');
 $objPHPExcel->setActiveSheetIndex(1)->mergeCells('V1:V2');
 $objPHPExcel->setActiveSheetIndex(1)->mergeCells('W1:W2');
+$objPHPExcel->setActiveSheetIndex(1)->mergeCells('X1:X2');
+$objPHPExcel->setActiveSheetIndex(1)->mergeCells('Y1:Y2');
 
 /** BG COLOR */
 $Orange = array('fill' => array('type' => PHPExcel_Style_Fill::FILL_SOLID,'color' => array('rgb' => 'E65B25')));
@@ -354,6 +398,13 @@ $objPHPExcel->setActiveSheetIndex(1)->getStyle("W1:W2")->applyFromArray($BiruTua
 $objPHPExcel->setActiveSheetIndex(1)->getStyle("K1:M2")->applyFromArray($Hijau);
 $objPHPExcel->setActiveSheetIndex(1)->getStyle("Q1:R2")->applyFromArray($Hijau);
 $objPHPExcel->setActiveSheetIndex(1)->getStyle("U1:U2")->applyFromArray($BiruMuda);
+$objPHPExcel->setActiveSheetIndex(1)->getStyle("X1:X2")->applyFromArray($Orange);
+$objPHPExcel->setActiveSheetIndex(1)->getStyle("Y1:Y2")->applyFromArray($BiruTua);
+/** CENTER */
+$objPHPExcel->setActiveSheetIndex(1)->getStyle("E1:G1")->applyFromArray($HorizontalCenter);
+$objPHPExcel->setActiveSheetIndex(1)->getStyle("N1:P1")->applyFromArray($HorizontalCenter);
+
+
 
 $objPHPExcel->setActiveSheetIndex(1)
             ->setCellValue('A1', 'NO')
@@ -380,10 +431,12 @@ $objPHPExcel->setActiveSheetIndex(1)
             ->setCellValue('T1', 'KODE DIVISI')
             ->setCellValue('U1', 'KODE SUB DIVISI')
             ->setCellValue('V1', 'KODE SEKSI / JABATAN')
-            ->setCellValue('W1', 'KODE BRANCH');
+            ->setCellValue('W1', 'KODE BRANCH')
+            ->setCellValue('X1', 'ALAMAT DOMISILI')
+            ->setCellValue('Y1', 'STATUS KAWIN');
 //$objPHPExcel->setActiveSheetIndex(1)->getStyle("A1:V2")->applyFromArray($Orange);
-$objPHPExcel->setActiveSheetIndex(1)->getStyle("A1:W2")->applyFromArray($TextTitle);
-$objPHPExcel->setActiveSheetIndex(1)->getStyle("A1:W12")->applyFromArray($border_style);
+$objPHPExcel->setActiveSheetIndex(1)->getStyle("A1:Y2")->applyFromArray($TextTitle);
+$objPHPExcel->setActiveSheetIndex(1)->getStyle("A1:Y12")->applyFromArray($border_style);
 
 
 
