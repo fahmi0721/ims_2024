@@ -191,6 +191,7 @@ $objPHPExcel->getActiveSheet()->setTitle($Titles);
 // Set active sheet index to the first sheet, so Excel opens this as the first sheet
 $objPHPExcel->setActiveSheetIndex(0);
 $Time = time();
+ob_end_clean();
 
 // Redirect output to a client’s web browser (Excel5)
 header('Content-Type: application/vnd.ms-excel');
@@ -207,4 +208,5 @@ header ('Pragma: public'); // HTTP/1.0
 
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 $objWriter->save('php://output');
+ob_end_clean();
 exit;

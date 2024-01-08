@@ -215,6 +215,7 @@ $objPHPExcel->getActiveSheet()->setTitle("Rekap Data Pendidikan");
 // Set active sheet index to the first sheet, so Excel opens this as the first sheet
 $objPHPExcel->setActiveSheetIndex(0);
 $Time = time();
+ob_end_clean();
 
 // Redirect output to a client’s web browser (Excel5)
 header('Content-Type: application/vnd.ms-excel');
@@ -230,5 +231,6 @@ header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
 header ('Pragma: public'); // HTTP/1.0
 
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+ob_end_clean();
 $objWriter->save('php://output');
 exit;
