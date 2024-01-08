@@ -30,6 +30,17 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <div class='col-sm-6'>
+                            <label class="control-label">Status Kontrak<span class='text-danger'>*</span></label>
+                            <div class="input-group">
+                                <span class='input-group-addon'><input type="radio" name='Status' value="pkwt" checked></span>
+                                <input type='text' readonly autocomplete=off class='form-control' value="PKWT" />
+                                <span class='input-group-addon'><input type="radio" name='Status' value="pkl"></span>
+                                <input type='text' readonly autocomplete=off class='form-control' value="PKL" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <div class="col-sm-12">
                             <div class='btn-group'>
                                 <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-check-square"></i> Submit</button>

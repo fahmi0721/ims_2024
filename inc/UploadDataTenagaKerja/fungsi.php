@@ -15,8 +15,8 @@
 
     function UploadData($data){
         try {
-            $target = basename($data['name']);
-            move_uploaded_file($data['tmp_name'], $target);
+            $target = basename($data['File']['name']);
+            move_uploaded_file($data['File']['tmp_name'], $target);
             chmod($target,0777);
             $inputFileName = $target;
             $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
@@ -58,7 +58,7 @@
                 }
             }
             unlink($target);
-            $InsertData = TambahByUploadData($dt);
+            $InsertData = TambahByUploadData($dt,$data['Status']);
             return $InsertData;
         } catch (Exception $th) {
             return $th->getMessage();
@@ -113,7 +113,7 @@
         
     }
 
-    function TambahByUploadData($data){
+    function TambahByUploadData($data,$Status){
         try {
             $error = array();
             $succes = array();
@@ -162,7 +162,7 @@
                             $r_up['KodeSubDivisi'] = $r['KodeSubDivisi'];
                             $r_up['KodeSeksi'] = $r['KodeSeksi'];
                             $r_up['Kategori'] = 0;
-                            TambahSkPengankatan($r_up);
+                            TambahSkPengankatan($r_up,$Status);
                             $NoKtpMaster[] = $r_up['NoKtp'];
                         }
                         $succes[] = "data dengan no ktp ".$r['NoKtp']." berhasil diupload";
@@ -200,9 +200,9 @@
         }
     }
 
-    function TambahSkPengankatan($data){
+    function TambahSkPengankatan($data,$Status){
         try {
-            $sql = "INSERT INTO ims_sk_pengangkatan SET NoKtp = :NoKtp, NoDokumen = :NoDokumen, KodeBranch = :KodeBranch, KodeCabang = :KodeCabang, KodeDivisi = :KodeDivisi, KodeSubDivisi = :KodeSubDivisi, KodeSeksi = :KodeSeksi, TanggalMulai = :TanggalMulai, Keterangan = :Keterangan, Kategori = :Kategori, TglCreate = :TglCreate, UserId = :UserId";
+            $sql = "INSERT INTO ims_sk_pengangkatan SET NoKtp = :NoKtp, NoDokumen = :NoDokumen, KodeBranch = :KodeBranch, KodeCabang = :KodeCabang, KodeDivisi = :KodeDivisi, KodeSubDivisi = :KodeSubDivisi, KodeSeksi = :KodeSeksi, TanggalMulai = :TanggalMulai, Keterangan = :Keterangan, Kategori = :Kategori, TglCreate = :TglCreate, UserId = :UserId,Status = :Status";
             $query = $GLOBALS['db']->prepare($sql);
             $query->bindParam("NoKtp", $data['NoKtp']);
             $query->bindParam("NoDokumen", $data['NoDokumen'], PDO::PARAM_STR);
@@ -216,6 +216,7 @@
             $query->bindParam("Kategori", $data['Kategori'], PDO::PARAM_STR);
             $query->bindParam("TglCreate", $data['TglCreate'], PDO::PARAM_STR);
             $query->bindParam("UserId", $data['UserId'], PDO::PARAM_STR);
+            $query->bindParam("Status", $Status, PDO::PARAM_STR);
             $query->execute();
             
             $res['status'] = "sukses";

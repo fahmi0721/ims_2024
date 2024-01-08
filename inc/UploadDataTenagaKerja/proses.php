@@ -13,7 +13,8 @@ switch ($proses) {
 		include_once '../../lib/PHPExcel/Classes/PHPExcel.php';
 		include_once '../../lib/PHPExcel/Classes/PHPExcel/IOFactory.php';
 		try {
-			$data = $_FILES['File'];
+			$data['File'] = $_FILES['File'];
+			$data['Status'] = $_POST['Status'];
 			$result = UploadData($data);
 		} catch (PDOException $e) {
 			$result = $e->getMessage();
