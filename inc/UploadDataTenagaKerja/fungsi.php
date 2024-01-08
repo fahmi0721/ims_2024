@@ -49,6 +49,8 @@
                     $res['KodeSubDivisi'] = anti_injection($objPHPExcel->getActiveSheet()->getCell("U$sheet_start2")->getValue()); 
                     $res['KodeSeksi'] = anti_injection($objPHPExcel->getActiveSheet()->getCell("V$sheet_start2")->getValue()); 
                     $res['KodeBranch'] = anti_injection($objPHPExcel->getActiveSheet()->getCell("W$sheet_start2")->getValue()); 
+                    $res['AlamatDomisili'] = anti_injection($objPHPExcel->getActiveSheet()->getCell("X$sheet_start2")->getValue()); 
+                    $res['StatusTk'] = anti_injection($objPHPExcel->getActiveSheet()->getCell("Y$sheet_start2")->getValue()); 
                     if($res['NoKtp'] != ""){
                         $dt[] = $res;
                     }
@@ -126,7 +128,7 @@
                     try {
                         $TglLahir = $r['ThnLahir']."-".$r['BlnLahir']."-".$r['TglLahir'];
                         $Tmt = $r['ThnTmt']."-".$r['BlnTmt']."-".$r['TglTmt'];
-                        $sql = "INSERT INTO ims_master_tenaga_kerja SET NoKtp = :NoKtp, Nama = :Nama, TptLahir = :TptLahir, TglLahir = :TglLahir, StatusKawin = :StatusKawin, JenisKelamin = :JenisKelamin, Agama =:Agama, Npwp = :Npwp, GolDarah = :GolDarah, NoHp = :NoHp, Tmt = :Tmt, Alamat = :Alamat, Flag = :Flag, TglCreate = :TglCreate, UserId = :UserId";
+                        $sql = "INSERT INTO ims_master_tenaga_kerja SET NoKtp = :NoKtp, Nama = :Nama, TptLahir = :TptLahir, TglLahir = :TglLahir, StatusKawin = :StatusKawin, JenisKelamin = :JenisKelamin, Agama =:Agama, Npwp = :Npwp, GolDarah = :GolDarah, NoHp = :NoHp, Tmt = :Tmt, Alamat = :Alamat, Flag = :Flag, TglCreate = :TglCreate, UserId = :UserId,AlamatDomisili = :AlamatDomisili, StatusTk = :StatusTk";
                         $stmt = $GLOBALS['db']->prepare($sql);
                         $stmt->bindParam("NoKtp", $r['NoKtp'],PDO::PARAM_STR);
                         $stmt->bindParam("Nama", $r['Nama'],PDO::PARAM_STR);
@@ -143,6 +145,8 @@
                         $stmt->bindParam("Flag", $Flag,PDO::PARAM_STR);
                         $stmt->bindParam("TglCreate", $TglCreate,PDO::PARAM_STR);
                         $stmt->bindParam("UserId", $UserId,PDO::PARAM_STR);
+                        $stmt->bindParam("AlamatDomisili", $r['AlamatDomisili'],PDO::PARAM_STR);
+                        $stmt->bindParam("StatusTk", $r['StatusTk'],PDO::PARAM_STR);
                         $stmt->execute();
                         if($stmt){
                             /** SK Pengangkatan */
