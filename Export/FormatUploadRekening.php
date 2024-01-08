@@ -185,7 +185,7 @@ $objPHPExcel->getActiveSheet(1)->setTitle('FORM UPLOAD REKENING');
 
 
 $Time = time();
-
+ob_end_clean(); 
 // Redirect output to a client’s web browser (Excel5)
 header('Content-Type: application/vnd.ms-excel');
 header('Content-Disposition: attachment;filename="FORM UPLOAD DATA REKENING.xls"');
@@ -201,4 +201,6 @@ header ('Pragma: public'); // HTTP/1.0
 
 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 $objWriter->save('php://output');
+ob_end_clean();
+
 exit;
